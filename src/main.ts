@@ -12,8 +12,6 @@ async function bootstrap() {
     .setTitle('Maycon Burger')
     .setDescription('Aplicação para gestão de Hamburgeria')
     .setVersion('1.0.0')
-    .addTag('status')
-    .addTag('table')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

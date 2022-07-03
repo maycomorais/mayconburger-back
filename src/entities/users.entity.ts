@@ -2,7 +2,7 @@ export class User {
   id: string;
   name: string;
   email: string;
-  telephone: number;
+  tellphone: number;
   postalCode: number;
   street: string;
   number: number;
@@ -10,6 +10,7 @@ export class User {
   city: string;
   state: string;
   password: string;
+  isAdmin: boolean;
   created_at: Date;
   uptaded_at: Date;
 }

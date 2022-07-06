@@ -1,24 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from 'src/entities/users.entity';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreaterUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { UptadeUserDto } from './dto/update-user.dto';
+import { handleErrorConstraintUnique } from 'src/utils/handle-error-unique.util';
 
 @Injectable()
 export class UsersService {
+  private userSelect = {
+    id: true,
+    name: true,
+    email: true,
+    ddd: true,
+    tellphone: true,
+    postalCode: true,
+    street: true,
+    complement: true,
+    number: true,
+    district: true,
+    city: true,
+    state: true,
+    password: true,
+    isAdmin: true,
+    createdAt: true,
+    uptadedAt: true,
+  };
+
   constructor(private readonly prisma: PrismaService) {}
 
-  getAll(): Promise<User[]> {
-    return this.prisma.user.findMany();
-  }
-
-  getById(id: string): Promise<User> {
-    return this.prisma.user.findUnique({ where: { id } });
-  }
-
-  create(dto: CreaterUserDto): Promise<User> {
-    const hashedPassword = bcrypt.hashSync(dto.password, 8);
+  async create(dto: CreaterUserDto): Promise<User | void> {
+    const hashedPassword = await bcrypt.hash(dto.password, 8);
 
     const data: CreaterUserDto = {
       name: dto.name,
@@ -34,17 +46,46 @@ export class UsersService {
       state: dto.state,
       password: hashedPassword,
     };
-    return this.prisma.user.create({ data });
+    return this.prisma.user
+      .create({ data, select: this.userSelect })
+      .catch(handleErrorConstraintUnique);
   }
 
-  update(id: string, dto: UptadeUserDto) {
-    return this.prisma.user.update({ where: { id }, data: dto });
+  findAll(): Promise<User[]> {
+    return this.prisma.user.findMany({ select: this.userSelect });
   }
 
-  delete(id: string) {
+  async findById(id: string): Promise<User> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { id },
+      select: this.userSelect,
+    });
+
+    if (!user) {
+      throw new NotFoundException(`Entrada de id ${id} não encontrada.`);
+    }
+
+    return user;
+  }
+
+  findOne(id: string) {
+    return this.findById(id);
+  }
+
+  async update(id: string, dto: UptadeUserDto) {
+    await this.findById(id);
+
+    return this.prisma.user
+      .update({ where: { id }, data: dto, select: this.userSelect })
+      .catch(handleErrorConstraintUnique);
+  }
+
+  async remove(id: string) {
+    await this.findById(id);
+
     return this.prisma.user.delete({
       where: { id },
-      select: { name: true, email: true },
+      select: this.userSelect,
     });
   }
 }

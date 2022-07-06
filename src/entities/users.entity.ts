@@ -13,6 +13,6 @@ export class User {
   state: string;
   password: string;
   isAdmin: boolean;
-  created_at: Date;
-  uptaded_at: Date;
+  createdAt: Date;
+  uptadedAt: Date;
 }

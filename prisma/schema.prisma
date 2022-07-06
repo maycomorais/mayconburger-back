@@ -25,6 +25,20 @@ model User {
   state String
   password String
   isAdmin Boolean @default(false)
-  created_at DateTime @default(now())
-  uptaded_at DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  uptadedAt DateTime @updatedAt @map("uptaded_at")
+
+  @@map("user")
+}
+
+model Product {
+  id String @id @default(uuid())
+  name String @unique
+  description String
+  price Float
+  image String
+  createdAt DateTime @default(now()) @map("created_at")
+  uptadedAt DateTime @updatedAt @map("uptaded_at")
+
+  @@map("products")
 }

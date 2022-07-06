@@ -4,7 +4,7 @@ export class Product {
   description: string;
   price: number;
   image: string;
-  createdAt: Date;
-  updatedAt: Date;
-  categoryId: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  categoryId?: string;
 }

@@ -42,3 +42,12 @@ model Product {
 
   @@map("products")
 }
+
+model Table {
+  id String @id @default(uuid())
+  number Int @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  uptadedAt DateTime @updatedAt @map("uptaded_at")
+
+  @@map("table")
+}

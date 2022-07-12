@@ -31,7 +31,7 @@ export class ProductsService {
     return product;
   }
 
-  findOne(id: string) {
+  findOne(id: string): Promise<Product> {
     return this.findById(id);
   }
 

@@ -9,7 +9,7 @@ import { Table } from './entities/table.entity';
 export class TablesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateTableDto): Promise<Table | void> {
+  async create(dto: CreateTableDto): Promise<Table> {
     return this.prisma.table
       .create({ data: dto })
       .catch(handleErrorConstraintUnique);

@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Não autorizado');
+      throw new UnauthorizedException('Usuário não autorizado');
     }
 
     delete user.password;

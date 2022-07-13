@@ -11,9 +11,15 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Maycon Burger')
     .setDescription('Aplicação para gestão de Hamburgeria')
-    .addTag('status')
     .addTag('users')
     .addTag('products')
+    .addTag('status')
+    .addTag('tables')
+    .addTag('categories')
+    .addTag('orders')
+    .addTag('favorites')
+    .addTag('auth')
+    .addBearerAuth()
     .setVersion('1.0.0')
     .build();
 

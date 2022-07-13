@@ -14,6 +14,7 @@ async function bootstrap() {
     .addTag('status')
     .addTag('users')
     .addTag('products')
+    .addTag('favorites')
     .setVersion('1.0.0')
     .build();
 

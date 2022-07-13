@@ -11,7 +11,8 @@ export class User {
   district: string;
   city: string;
   state: string;
-  password?: string;
+  password: string;
+  isAdmin: boolean;
   createdAt: Date;
-  updatedAt: Date;
+  uptadedAt: Date;
 }

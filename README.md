@@ -2,7 +2,7 @@
   <img src="https://cdn-adonis.s3.sa-east-1.amazonaws.com/136520210621001708hn4U9cYqA.jpeg" width="300" alt="Maicon's burger" />
 </p>
 
-# Hamburgueria Blue
+# Maycon Burger
 
 Project Developed for educational purposes of the Blue EdTech Full Stack Web Development course in order to learn the concepts to work with Nest.js + Prisma.
 <br/>

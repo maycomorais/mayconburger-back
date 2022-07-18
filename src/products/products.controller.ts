@@ -6,24 +6,28 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
   Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Product } from './entities/product.entity';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard())
 @ApiTags('products')
+@ApiBearerAuth()
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
   @ApiOperation({
-    summary: 'criação de produtos',
+    summary: 'Criação de produtos',
   })
-  create(@Body() dto: CreateProductDto): Promise<Product | void> {
+  create(@Body() dto: CreateProductDto) {
     return this.productsService.create(dto);
   }
 
@@ -37,15 +41,15 @@ export class ProductsController {
 
   @Get(':id')
   @ApiOperation({
-    summary: 'Listar produto único',
+    summary: 'Listagem de um produto',
   })
-  findOne(@Param('id') id: string): Promise<Product> {
+  findOne(@Param('id') id: string) {
     return this.productsService.findOne(id);
   }
 
   @Patch(':id')
   @ApiOperation({
-    summary: 'Atualização de produtos',
+    summary: 'Atualização de um produto',
   })
   update(@Param('id') id: string, @Body() dto: UpdateProductDto) {
     return this.productsService.update(id, dto);
@@ -53,7 +57,7 @@ export class ProductsController {
 
   @Delete(':id')
   @ApiOperation({
-    summary: 'Deletar de produto',
+    summary: 'Exclusão de um produto',
   })
   remove(@Param('id') id: string) {
     return this.productsService.remove(id);

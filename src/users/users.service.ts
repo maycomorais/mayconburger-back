@@ -3,7 +3,7 @@ import { User } from 'src/entities/users.entity';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreaterUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcryptjs';
-import { UptadeUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { handleErrorConstraintUnique } from 'src/utils/handle-error-unique.util';
 
 @Injectable()
@@ -52,13 +52,21 @@ export class UsersService {
   }
 
   findAll(): Promise<User[]> {
-    return this.prisma.user.findMany({ select: this.userSelect });
+    return this.prisma.user.findMany({
+      select: {
+        ...this.userSelect,
+        favorites: true,
+      },
+    });
   }
 
   async findById(id: string): Promise<User> {
     const user: User = await this.prisma.user.findUnique({
       where: { id },
-      select: this.userSelect,
+      select: {
+        ...this.userSelect,
+        favorites: true,
+      },
     });
 
     if (!user) {
@@ -72,7 +80,7 @@ export class UsersService {
     return this.findById(id);
   }
 
-  async update(id: string, dto: UptadeUserDto) {
+  async update(id: string, dto: UpdateUserDto) {
     await this.findById(id);
 
     return this.prisma.user

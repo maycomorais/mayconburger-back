@@ -6,55 +6,68 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { User } from 'src/entities/users.entity';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreaterUserDto } from './dto/create-user.dto';
-import { UptadeUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entity/users.entity';
 import { UsersService } from './users.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('users')
 @Controller('users')
-export class UserControllers {
-  constructor(private readonly userService: UsersService) {}
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @ApiOperation({
-    summary: 'Criar novo usuário',
+    summary: 'Cria um novo usuário',
   })
   create(@Body() dto: CreaterUserDto): Promise<User | void> {
-    return this.userService.create(dto);
+    return this.usersService.create(dto);
   }
 
   @Get()
+  @UseGuards(AuthGuard())
   @ApiOperation({
-    summary: 'Listar todos os usuários',
+    summary: 'Lista todos os usuários',
   })
+  @ApiBearerAuth()
   findAll(): Promise<User[]> {
-    return this.userService.findAll();
+    return this.usersService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard())
   @ApiOperation({
-    summary: 'Listar Usuário por ID',
+    summary: 'Lista usuário por id',
   })
+  @ApiBearerAuth()
   findOne(@Param('id') id: string): Promise<User> {
-    return this.userService.findOne(id);
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard())
   @ApiOperation({
-    summary: 'Atualizar um Usuário',
+    summary: 'Atualizar um usuário',
   })
-  update(@Param('id') id: string, @Body() dto: UptadeUserDto): Promise<User> {
-    return this.userService.update(id, dto);
+  @ApiBearerAuth()
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserDto,
+  ): Promise<User | void> {
+    return this.usersService.update(id, dto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard())
   @ApiOperation({
-    summary: 'Deletar Usuário',
+    summary: 'Deletar um usuário',
   })
+  @ApiBearerAuth()
   remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+    return this.usersService.remove(id);
   }
 }

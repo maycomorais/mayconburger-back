@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { handleErrorConstraintUnique } from 'src/utils/handle-error-unique.util';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -15,28 +19,38 @@ export class ProductsService {
       .catch(handleErrorConstraintUnique);
   }
 
-  findAll(): Promise<Product[]> {
-    return this.prisma.product.findMany();
+  async findAll(query: Partial<Product>): Promise<Product[]> {
+    const products: Product[] = await this.prisma.product
+      .findMany({ where: query })
+      .catch(() => {
+        throw new UnprocessableEntityException('Formato de query inválida');
+      });
+
+    if (products.length === 0) {
+      throw new NotFoundException('Nenhuma entrada encontrada');
+    }
+
+    return products;
   }
 
-  async findById(id: string): Promise<Product> {
+  async verifyIdAndReturnProduct(id: string): Promise<Product> {
     const product: Product = await this.prisma.product.findUnique({
       where: { id },
     });
 
     if (!product) {
-      throw new NotFoundException(`Entrada de id ${id} não encontrada.`);
+      throw new NotFoundException(`Entrada de id '${id}' não encontrada`);
     }
 
     return product;
   }
 
   findOne(id: string): Promise<Product> {
-    return this.findById(id);
+    return this.verifyIdAndReturnProduct(id);
   }
 
   async update(id: string, dto: UpdateProductDto): Promise<Product | void> {
-    await this.findById(id);
+    await this.verifyIdAndReturnProduct(id);
 
     return this.prisma.product
       .update({ where: { id }, data: dto })
@@ -44,7 +58,7 @@ export class ProductsService {
   }
 
   async remove(id: string) {
-    await this.findById(id);
+    await this.verifyIdAndReturnProduct(id);
 
     return this.prisma.product.delete({ where: { id } });
   }
